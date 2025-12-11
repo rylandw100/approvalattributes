@@ -1,0 +1,5 @@
+# This file ensures the receipts directory is tracked by git
+# Add your receipt images here:
+# - uber-receipt.png
+# - hotel-receipt.png  
+# - restaurant-receipt.png

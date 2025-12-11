@@ -178,7 +178,7 @@ const allRequests = [
     tooltip: {
       title: "Reimburse $37.95 Uber",
       iconType: "creditCard",
-      receiptImage: "/receipt-uber.png",
+      receiptImage: "/receipts/uber-receipt.png",
       details: [
         { label: "Amount", value: "$37.95" },
         { label: "Vendor", value: "Uber" },
@@ -205,7 +205,7 @@ const allRequests = [
     tooltip: {
       title: "Reimburse $125.50 Hotel",
       iconType: "creditCard",
-      receiptImage: "/receipt-uber.png",
+      receiptImage: "/receipts/hotel-receipt.png",
       details: [
         { label: "Amount", value: "$125.50" },
         { label: "Vendor", value: "Marriott Hotel" },
@@ -226,7 +226,7 @@ const allRequests = [
     tooltip: {
       title: "Reimburse $89.25 Restaurant",
       iconType: "creditCard",
-      receiptImage: "/receipt-uber.png",
+      receiptImage: "/receipts/restaurant-receipt.png",
       details: [
         { label: "Amount", value: "$89.25" },
         { label: "Vendor", value: "The Capital Grille" },
@@ -489,6 +489,7 @@ interface RequestsTableProps {
 
 export function RequestsTable({ categoryName = "Time and attendance" }: RequestsTableProps) {
   const [hoveredRow, setHoveredRow] = useState<number | null>(null)
+  const [fullScreenImage, setFullScreenImage] = useState<string | null>(null)
 
   // Filter requests by category
   const requests = allRequests.filter(request => request.category === categoryName)
@@ -616,15 +617,36 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                             request.tooltip.receiptImage ? "w-auto" : "w-80"
                           )}
                           sideOffset={8}
+                          style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}
                         >
-                          <div className={cn("flex", request.tooltip.receiptImage ? "gap-4" : "p-3")}>
+                          <div className={cn("flex", request.tooltip.receiptImage ? "gap-4" : "p-3")} style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}>
                             {request.tooltip.receiptImage && (
-                              <div className="bg-white flex items-center shrink-0" style={{ paddingLeft: '60px', paddingRight: '60px' }}>
-                                <div className="relative shrink-0" style={{ height: '450px', width: '159px' }}>
+                              <div className="bg-white flex items-stretch shrink-0" style={{ paddingLeft: '30px', paddingRight: '30px' }}>
+                                <div 
+                                  className="relative shrink-0 cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center" 
+                                  style={{ height: '550px', width: '280px', minWidth: '280px' }}
+                                  onClick={() => setFullScreenImage(request.tooltip.receiptImage!)}
+                                >
                                   <img 
                                     src={request.tooltip.receiptImage} 
                                     alt="Receipt" 
-                                    className="absolute inset-0 max-w-none object-cover object-center pointer-events-none w-full h-full"
+                                    className="pointer-events-auto"
+                                    style={{ 
+                                      width: '100%', 
+                                      height: '100%', 
+                                      objectFit: 'contain',
+                                      objectPosition: 'center',
+                                      maxWidth: '100%',
+                                      maxHeight: '100%'
+                                    }}
+                                    onError={(e) => {
+                                      console.error('Failed to load receipt image:', request.tooltip.receiptImage);
+                                      console.error('Expected path:', request.tooltip.receiptImage);
+                                      e.currentTarget.style.display = 'none';
+                                    }}
+                                    onLoad={() => {
+                                      console.log('Successfully loaded receipt image:', request.tooltip.receiptImage);
+                                    }}
                                   />
                                 </div>
                               </div>
@@ -632,7 +654,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                             <div className={cn(
                               "flex flex-col gap-[10px]",
                               request.tooltip.receiptImage ? "w-[215px]" : "w-full"
-                            )} style={request.tooltip.receiptImage ? { padding: '12px' } : { padding: '12px' }}>
+                            )} style={request.tooltip.receiptImage ? { padding: '12px', alignSelf: 'stretch' } : { padding: '12px' }}>
                               <div className="flex flex-col">
                                 <div className="flex items-center gap-2" style={{ marginBottom: request.tooltip.receiptImage ? '0' : '10px' }}>
                                   <Avatar 
@@ -756,6 +778,30 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
           </Table>
         </TooltipProvider>
       </div>
+      
+      {/* Full Screen Image Modal */}
+      {fullScreenImage && (
+        <div 
+          className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center p-4"
+          onClick={() => setFullScreenImage(null)}
+        >
+          <div className="relative max-w-full max-h-full">
+            <button
+              onClick={() => setFullScreenImage(null)}
+              className="absolute top-4 right-4 text-white hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full p-2"
+              aria-label="Close"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <img 
+              src={fullScreenImage} 
+              alt="Receipt full screen" 
+              className="max-w-full max-h-[90vh] object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
