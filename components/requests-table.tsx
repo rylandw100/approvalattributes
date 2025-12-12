@@ -616,7 +616,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                           sideOffset={8}
                           style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}
                         >
-                          <div className={cn("flex", request.tooltip.receiptImage ? "gap-4" : "p-3")} style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}>
+                          <div className={cn("flex", request.tooltip.receiptImage ? "gap-4" : "")} style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}>
                             {request.tooltip.receiptImage && (
                               <div className="bg-white flex items-stretch shrink-0" style={{ paddingLeft: '30px', paddingRight: '30px' }}>
                                 <div 
