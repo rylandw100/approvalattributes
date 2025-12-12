@@ -598,17 +598,18 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                     </div>
                   </TableCell>
                   <TableCell className="min-w-0 py-2">
-                    <div className="flex items-center justify-between gap-2 min-w-0">
+                    <div className="flex items-center min-w-0">
                       <span className="text-gray-900 flex-1 min-w-0 truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>
                         {request.description}
                       </span>
-                      <Tooltip delayDuration={200}>
-                        <TooltipTrigger asChild>
-                          <div className="flex items-center text-[12px] leading-4 text-gray-600 cursor-pointer hover:text-gray-900 shrink-0 border border-gray-300 rounded-full" style={{ height: '20px', paddingLeft: '6px', paddingRight: '6px', paddingTop: '4px', paddingBottom: '4px' }}>
-                            <Info className="h-3 w-3" style={{ marginRight: '4px' }} />
-                            <span className="font-medium">Details</span>
-                          </div>
-                        </TooltipTrigger>
+                      <div style={{ marginLeft: '12px', flexShrink: 0 }}>
+                        <Tooltip delayDuration={200}>
+                          <TooltipTrigger asChild>
+                            <div className="flex items-center text-[12px] leading-4 text-gray-600 cursor-pointer hover:text-gray-900 shrink-0 border border-gray-300 rounded-full" style={{ height: '20px', paddingLeft: '6px', paddingRight: '6px', paddingTop: '4px', paddingBottom: '4px' }}>
+                              <Info className="h-3 w-3" style={{ marginRight: '4px' }} />
+                              <span className="font-medium">Details</span>
+                            </div>
+                          </TooltipTrigger>
                         <TooltipContent 
                           side="right" 
                           className={cn(
@@ -748,26 +749,22 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                   </TableCell>
                   <TableCell className="w-[144px] py-2">
                     <div className="flex items-center justify-end gap-3">
-                      {hoveredRow === index && (
-                        <>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 text-green-600 hover:text-green-700 hover:bg-green-50"
-                            title="Approve"
-                          >
-                            <Check className="h-6 w-6" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 text-red-600 hover:text-red-700 hover:bg-red-50"
-                            title="Reject"
-                          >
-                            <X className="h-6 w-6" />
-                          </Button>
-                        </>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-green-600 hover:text-green-700 hover:bg-green-50"
+                        title="Approve"
+                      >
+                        <Check className="h-6 w-6" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        title="Reject"
+                      >
+                        <X className="h-6 w-6" />
+                      </Button>
                       <Button variant="ghost" size="icon" className="h-6 w-6">
                         <ChevronRight className="h-4 w-4" />
                       </Button>
