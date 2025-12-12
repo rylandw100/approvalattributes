@@ -39,13 +39,12 @@ const allRequests = [
     date: "Dec 10, 2025",
     name: "Will Cohen",
     role: "Medical Assistant",
-    description: "Time entry: Will Cohen, 13.75 hrs on Dec 10",
+    description: "13.75 hrs time entry on Dec 10",
     hasComment: false,
     tooltip: {
-      title: "Will Cohen, 13.75 hrs on Dec 10",
+      title: "13.75 hrs time entry on Dec 10",
       iconType: "clock",
       details: [
-        { label: "Person", value: "Will Cohen" },
         { label: "Duration", value: "13.75 hours" },
         { label: "Time", value: "Dec 10, 2025, 09:35 AM - 11:20 PM PST" },
         { label: "Unpaid breaks", value: "0 minutes" },
@@ -57,7 +56,7 @@ const allRequests = [
     date: "Dec 09, 2025",
     name: "Sarah Martinez",
     role: "Nurse",
-    description: "Time entry: Sarah Martinez, 8.5 hrs on Dec 09",
+    description: "8.5 hrs time entry on Dec 09",
     hasComment: true,
     comment: {
       author: "John Smith",
@@ -66,10 +65,9 @@ const allRequests = [
       totalComments: 1,
     },
     tooltip: {
-      title: "Sarah Martinez, 8.5 hrs on Dec 09",
+      title: "8.5 hrs time entry on Dec 09",
       iconType: "clock",
       details: [
-        { label: "Person", value: "Sarah Martinez" },
         { label: "Duration", value: "8.5 hours" },
         { label: "Time", value: "Dec 09, 2025, 08:00 AM - 05:00 PM PST" },
         { label: "Unpaid breaks", value: "30 minutes" },
@@ -81,13 +79,12 @@ const allRequests = [
     date: "Dec 08, 2025",
     name: "James Wilson",
     role: "Medical Assistant",
-    description: "Time entry: James Wilson, 10.25 hrs on Dec 08",
+    description: "10.25 hrs time entry on Dec 08",
     hasComment: false,
     tooltip: {
-      title: "James Wilson, 10.25 hrs on Dec 08",
+      title: "10.25 hrs time entry on Dec 08",
       iconType: "clock",
       details: [
-        { label: "Person", value: "James Wilson" },
         { label: "Duration", value: "10.25 hours" },
         { label: "Time", value: "Dec 08, 2025, 07:30 AM - 06:45 PM PST" },
         { label: "Unpaid breaks", value: "15 minutes" },
@@ -352,10 +349,10 @@ const allRequests = [
     date: "Dec 01, 2025",
     name: "Kelsey Matthews",
     role: "Medical Assistant",
-    description: "Change shift to Dec 10, 08:15 AM - 05:00 PM PST",
+    description: "Update East Bay Schedule on Dec 10",
     hasComment: false,
     tooltip: {
-      title: "Change shift to Dec 10, 08:15 AM - 05:00 PM PST",
+      title: "Update East Bay Schedule on Dec 10",
       iconType: "calendar",
       details: [
         { label: "Person", value: "Kelsey Matthews" },
@@ -370,7 +367,7 @@ const allRequests = [
     date: "Nov 30, 2025",
     name: "Tom Bradley",
     role: "Nurse",
-    description: "Change shift to Dec 15, 06:00 AM - 02:00 PM PST",
+    description: "Update Morning Schedule on Dec 15",
     hasComment: true,
     comment: {
       author: "Patricia Brown",
@@ -379,7 +376,7 @@ const allRequests = [
       totalComments: 1,
     },
     tooltip: {
-      title: "Change shift to Dec 15, 06:00 AM - 02:00 PM PST",
+      title: "Update Morning Schedule on Dec 15",
       iconType: "calendar",
       details: [
         { label: "Person", value: "Tom Bradley" },
@@ -394,10 +391,10 @@ const allRequests = [
     date: "Nov 28, 2025",
     name: "Rachel Green",
     role: "Medical Assistant",
-    description: "Change shift to Dec 12, 02:00 PM - 10:00 PM PST",
+    description: "Update Evening Schedule on Dec 12",
     hasComment: false,
     tooltip: {
-      title: "Change shift to Dec 12, 02:00 PM - 10:00 PM PST",
+      title: "Update Evening Schedule on Dec 12",
       iconType: "calendar",
       details: [
         { label: "Person", value: "Rachel Green" },
