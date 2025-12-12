@@ -599,10 +599,10 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                   </TableCell>
                   <TableCell className="min-w-0 py-2">
                     <div className="flex items-center min-w-0">
-                      <span className="text-gray-900 flex-1 min-w-0 truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>
+                      <span className="text-gray-900 min-w-0 truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>
                         {request.description}
                       </span>
-                      <div style={{ marginLeft: '12px', flexShrink: 0 }}>
+                      <span style={{ marginLeft: '12px', flexShrink: 0, whiteSpace: 'nowrap' }}>
                         <Tooltip delayDuration={200}>
                           <TooltipTrigger asChild>
                             <div className="flex items-center text-[12px] leading-4 text-gray-600 cursor-pointer hover:text-gray-900 shrink-0 border border-gray-300 rounded-full" style={{ height: '20px', paddingLeft: '6px', paddingRight: '6px', paddingTop: '4px', paddingBottom: '4px' }}>
@@ -700,7 +700,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                           </div>
                         </TooltipContent>
                       </Tooltip>
-                      </div>
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell className="w-[125px] py-2">
