@@ -675,9 +675,9 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                                   </div>
                                 </div>
                               </div>
-                              <div style={{ borderTop: '1px solid #D5D3D0', paddingTop: '10px', paddingBottom: '0' }}>
-                                {(request.tooltip.showMoreLink ? request.tooltip.details.slice(0, 8) : request.tooltip.details).map((detail, idx) => (
-                                  <div key={idx} style={{ marginBottom: idx < (request.tooltip.showMoreLink ? Math.min(8, request.tooltip.details.length) : request.tooltip.details.length) - 1 ? '10px' : '0' }}>
+                              <div style={{ borderTop: '1px solid #D5D3D0', paddingTop: '10px', paddingBottom: '0', maxHeight: '220px', overflowY: 'auto' }}>
+                                {request.tooltip.details.map((detail, idx) => (
+                                  <div key={idx} style={{ marginBottom: idx < request.tooltip.details.length - 1 ? '10px' : '0' }}>
                                     <div className="text-xs text-gray-500">
                                       {detail.label}
                                     </div>
@@ -686,16 +686,6 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                                     </div>
                                   </div>
                                 ))}
-                                {request.tooltip.showMoreLink && request.tooltip.details.length > 8 && (
-                                  <a 
-                                    href="#" 
-                                    className="text-xs underline font-medium"
-                                    style={{ color: '#1E4AA9', marginTop: '10px', display: 'block' }}
-                                    onClick={(e) => e.preventDefault()}
-                                  >
-                                    See more
-                                  </a>
-                                )}
                               </div>
                             </div>
                           </div>
