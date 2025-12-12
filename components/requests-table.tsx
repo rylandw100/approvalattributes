@@ -516,7 +516,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-white border border-gray-200 rounded-2xl overflow-hidden">
+    <div className="flex-1 flex flex-col bg-white border border-gray-200 rounded-2xl overflow-hidden" style={{ backgroundColor: 'white' }}>
       {/* Table Header */}
       <div className="p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center mb-4">
