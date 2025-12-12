@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react"
 import * as React from "react"
-import { createPortal } from "react-dom"
 import { Search, ChevronRight, Check, X, Info, Clock } from "lucide-react"
 import { CommentIcon } from "@/components/comment-icon"
 import { 
@@ -491,9 +490,6 @@ interface RequestsTableProps {
 export function RequestsTable({ categoryName = "Time and attendance" }: RequestsTableProps) {
   const [hoveredRow, setHoveredRow] = useState<number | null>(null)
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null)
-  const [showTooltip, setShowTooltip] = useState<number | null>(null)
-  const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null)
-  const timeoutRefs = React.useRef<{ [key: number]: NodeJS.Timeout }>({})
 
   // Filter requests by category
   const requests = allRequests.filter(request => request.category === categoryName)
@@ -602,47 +598,30 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell 
-                    className="min-w-0 py-2"
-                    onMouseEnter={(e) => {
-                      // Capture initial mouse position
-                      setTooltipPosition({ x: e.clientX, y: e.clientY })
-                      // Clear any existing timeout for this row
-                      if (timeoutRefs.current[index]) {
-                        clearTimeout(timeoutRefs.current[index])
-                      }
-                      // Show tooltip after 1 second delay
-                      timeoutRefs.current[index] = setTimeout(() => {
-                        setShowTooltip(index)
-                      }, 1000)
-                    }}
-                    onMouseLeave={(e) => {
-                      setShowTooltip(null)
-                      setTooltipPosition(null)
-                      // Clear timeout when leaving
-                      if (timeoutRefs.current[index]) {
-                        clearTimeout(timeoutRefs.current[index])
-                        delete timeoutRefs.current[index]
-                      }
-                    }}
-                  >
-                    <div className="w-full">
-                      <span className="text-gray-900 min-w-0 truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>
-                        {request.description}
-                      </span>
-                    </div>
-                    {showTooltip === index && tooltipPosition && createPortal(
-                      <div
+                  <TableCell className="min-w-0 py-2">
+                    <Tooltip delayDuration={200}>
+                      <TooltipTrigger asChild>
+                        <span 
+                          className="text-gray-900 min-w-0 truncate cursor-pointer hover:bg-blue-50 px-1 inline-block" 
+                          style={{ 
+                            fontSize: '14px', 
+                            lineHeight: '16px',
+                            borderBottom: '1px dotted #D1D5DB',
+                            paddingBottom: '4px',
+                            paddingTop: '2px'
+                          }}
+                        >
+                          {request.description}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent 
+                        side="right" 
                         className={cn(
-                          "fixed z-50 p-0 bg-[#EDEBE7] border border-gray-200 shadow-lg rounded-xl pointer-events-none",
+                          "p-0 bg-[#EDEBE7] border border-gray-200 shadow-lg rounded-xl",
                           request.tooltip.receiptImage ? "w-auto" : "w-80"
                         )}
-                        style={{
-                          left: `${tooltipPosition.x + 12}px`,
-                          top: `${tooltipPosition.y}px`,
-                          transform: tooltipPosition.x > window.innerWidth / 2 ? 'translateX(-100%)' : 'none',
-                          minHeight: request.tooltip.receiptImage ? '550px' : undefined,
-                        }}
+                        sideOffset={8}
+                        style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}
                       >
                           <div className={cn("flex", request.tooltip.receiptImage ? "gap-4" : "")} style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}>
                             {request.tooltip.receiptImage && (
@@ -723,9 +702,8 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                               </div>
                             </div>
                           </div>
-                      </div>,
-                      document.body
-                    )}
+                        </TooltipContent>
+                      </Tooltip>
                   </TableCell>
                   <TableCell className="w-[125px] py-2">
                     {request.hasComment && request.comment ? (
