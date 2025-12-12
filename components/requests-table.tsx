@@ -702,7 +702,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                     </div>
                   </TableCell>
                   <TableCell className="w-[125px] py-2">
-                    {request.hasComment && request.comment && (
+                    {request.hasComment && request.comment ? (
                       <Tooltip delayDuration={200}>
                         <TooltipTrigger asChild>
                           <div className="cursor-pointer">
