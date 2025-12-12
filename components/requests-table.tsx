@@ -668,8 +668,8 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                                       {getTooltipIcon(request.tooltip.iconType)}
                                     </AvatarFallback>
                                   </Avatar>
-                                  <div className="min-w-0 flex-1">
-                                    <span className="font-medium text-gray-900 break-words" style={{ fontSize: '14px', lineHeight: '20px', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
+                                  <div className="min-w-0 flex-1" style={{ width: 0 }}>
+                                    <span className="font-medium text-gray-900 break-words" style={{ fontSize: '14px', lineHeight: '20px', wordWrap: 'break-word', overflowWrap: 'break-word', display: 'block' }}>
                                       {request.tooltip.title}
                                     </span>
                                   </div>
