@@ -602,14 +602,12 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                       <span className="text-gray-900 min-w-0 truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>
                         {request.description}
                       </span>
-                      <span style={{ marginLeft: '12px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+                      <span style={{ marginLeft: '4px', flexShrink: 0, whiteSpace: 'nowrap' }}>
                         <Tooltip delayDuration={200}>
                           <TooltipTrigger asChild>
                             <div className="cursor-pointer shrink-0" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="8" cy="8" r="8" fill="#6F6F72"/>
-                                <path d="M8 4.5C8.41421 4.5 8.75 4.83579 8.75 5.25C8.75 5.66421 8.41421 6 8 6C7.58579 6 7.25 5.66421 7.25 5.25C7.25 4.83579 7.58579 4.5 8 4.5Z" fill="white"/>
-                                <path d="M7 7.5H8.5V11.5H7V7.5Z" fill="white"/>
+                                <path d="M1.1665 8.00008C1.1665 11.7741 4.22584 14.8334 7.99984 14.8334C11.7738 14.8334 14.8332 11.7741 14.8332 8.00008C14.8332 4.22608 11.7738 1.16675 7.99984 1.16675C4.22584 1.16675 1.1665 4.22608 1.1665 8.00008ZM7.33317 5.50008C7.33317 5.13208 7.63184 4.83341 7.99984 4.83341C8.36784 4.83341 8.6665 5.13208 8.6665 5.50008C8.6665 5.86808 8.36784 6.16675 7.99984 6.16675C7.63184 6.16675 7.33317 5.86808 7.33317 5.50008ZM8.49984 7.16675V11.1667H7.49984V7.16675H8.49984Z" fill="#716F6C"/>
                               </svg>
                             </div>
                           </TooltipTrigger>
