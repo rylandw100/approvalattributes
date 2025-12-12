@@ -540,20 +540,20 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
           <Table>
             <TableHeader>
               <TableRow className="h-10">
-                <TableHead className="w-12 h-10 bg-[#F9F7F6]">
+                <TableHead className="w-12 h-10 bg-[#FAFAFA]">
                   <Checkbox />
                 </TableHead>
-              <TableHead className="w-[145px] h-10 bg-[#F9F7F6]" style={{ fontSize: '14px', lineHeight: '16px' }}>
+              <TableHead className="w-[145px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
                 Requested on
               </TableHead>
-              <TableHead className="w-[180px] h-10 bg-[#F9F7F6]" style={{ fontSize: '14px', lineHeight: '16px' }}>
+              <TableHead className="w-[180px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
                 Requested by
               </TableHead>
-              <TableHead className="h-10 bg-[#F9F7F6]" style={{ fontSize: '14px', lineHeight: '16px' }}>
+              <TableHead className="h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
                 Description
               </TableHead>
-              <TableHead className="w-[125px] h-10 bg-[#F9F7F6]" style={{ fontSize: '14px', lineHeight: '16px' }}>Attributes</TableHead>
-              <TableHead className="w-[144px] h-10 bg-[#F9F7F6]" style={{ fontSize: '14px', lineHeight: '16px' }}></TableHead>
+              <TableHead className="w-[125px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>Attributes</TableHead>
+              <TableHead className="w-[144px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="[&_tr:last-child]:!border-b">
