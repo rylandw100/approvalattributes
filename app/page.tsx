@@ -12,7 +12,9 @@ export default function Home() {
     <div className="flex flex-col h-screen" style={{ backgroundColor: '#F9F7F6' }}>
       <main className="flex-1 flex flex-col overflow-hidden" style={{ backgroundColor: '#F9F7F6' }}>
         <div className="px-14 py-8" style={{ backgroundColor: '#F9F7F6' }}>
-          <h1 className="text-2xl font-semibold text-gray-900 mb-6">Approvals</h1>
+          <div className="w-screen bg-white" style={{ marginLeft: '-56px', marginRight: '-56px', marginBottom: '32px', paddingLeft: '56px', paddingRight: '56px', paddingTop: '32px', paddingBottom: '24px' }}>
+            <h1 className="text-2xl font-semibold text-gray-900">Approvals</h1>
+          </div>
           <Tabs defaultValue="needs-review" className="w-full">
             <div className="w-screen bg-white border-b border-gray-200" style={{ marginLeft: '-56px', marginRight: '-56px', marginBottom: '32px' }}>
               <TabsList className="bg-white p-0 h-auto rounded-none w-full justify-start" style={{ paddingLeft: '56px', paddingRight: '56px' }}>
