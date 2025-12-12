@@ -455,6 +455,8 @@ const allRequests = [
         { label: "Client", value: "Acme Corporation" },
         { label: "Manager", value: "Kevin Brown" },
         { label: "Category", value: "Software Development" },
+        { label: "Region", value: "North America" },
+        { label: "Technology Stack", value: "React, Node.js, PostgreSQL" },
       ],
       showMoreLink: true,
     },
@@ -672,8 +674,8 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                                 </div>
                               </div>
                               <div style={{ borderTop: '1px solid #D5D3D0', paddingTop: '10px', paddingBottom: '0' }}>
-                                {(request.tooltip.showMoreLink ? request.tooltip.details.slice(0, 6) : request.tooltip.details).map((detail, idx) => (
-                                  <div key={idx} style={{ marginBottom: idx < (request.tooltip.showMoreLink ? Math.min(6, request.tooltip.details.length) : request.tooltip.details.length) - 1 ? '10px' : '0' }}>
+                                {(request.tooltip.showMoreLink ? request.tooltip.details.slice(0, 8) : request.tooltip.details).map((detail, idx) => (
+                                  <div key={idx} style={{ marginBottom: idx < (request.tooltip.showMoreLink ? Math.min(8, request.tooltip.details.length) : request.tooltip.details.length) - 1 ? '10px' : '0' }}>
                                     <div className="text-xs text-gray-500">
                                       {detail.label}
                                     </div>
@@ -682,7 +684,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                                     </div>
                                   </div>
                                 ))}
-                                {request.tooltip.showMoreLink && request.tooltip.details.length > 6 && (
+                                {request.tooltip.showMoreLink && request.tooltip.details.length > 8 && (
                                   <a 
                                     href="#" 
                                     className="text-xs underline font-medium"
