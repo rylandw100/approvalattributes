@@ -597,7 +597,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                   </TableCell>
                   <TableCell className="min-w-0 py-2">
                     <div className="flex items-center justify-between gap-2 min-w-0">
-                      <span className="text-gray-900 flex-1 min-w-0" style={{ fontSize: '14px', lineHeight: '16px' }}>
+                      <span className="text-gray-900 flex-1 min-w-0 truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>
                         {request.description}
                       </span>
                       <Tooltip delayDuration={200}>
@@ -649,9 +649,9 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                               </div>
                             )}
                             <div className={cn(
-                              "flex flex-col gap-[10px]",
+                              "flex flex-col gap-[10px] p-3",
                               request.tooltip.receiptImage ? "w-[215px]" : "w-full"
-                            )} style={request.tooltip.receiptImage ? { padding: '12px', alignSelf: 'stretch' } : { padding: '12px' }}>
+                            )} style={request.tooltip.receiptImage ? { alignSelf: 'stretch' } : {}}>
                               <div className="flex flex-col">
                                 <div className="flex items-center gap-2" style={{ marginBottom: request.tooltip.receiptImage ? '0' : '10px' }}>
                                   <Avatar 
