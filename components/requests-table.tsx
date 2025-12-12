@@ -657,7 +657,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                               request.tooltip.receiptImage ? "w-[215px]" : "w-full"
                             )} style={request.tooltip.receiptImage ? { alignSelf: 'stretch' } : {}}>
                               <div className="flex flex-col">
-                                <div className="flex items-center gap-2" style={{ marginBottom: request.tooltip.receiptImage ? '0' : '10px' }}>
+                                <div className="flex items-start gap-2" style={{ marginBottom: '0' }}>
                                   <Avatar 
                                     className="h-8 w-8 shrink-0 bg-white rounded-full" 
                                   >
@@ -668,8 +668,8 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                                       {getTooltipIcon(request.tooltip.iconType)}
                                     </AvatarFallback>
                                   </Avatar>
-                                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                                    <span className="font-medium text-gray-900 break-words" style={{ fontSize: '14px', lineHeight: '20px' }}>
+                                  <div className="min-w-0 flex-1">
+                                    <span className="font-medium text-gray-900 break-words" style={{ fontSize: '14px', lineHeight: '20px', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
                                       {request.tooltip.title}
                                     </span>
                                   </div>
