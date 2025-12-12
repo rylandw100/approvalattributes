@@ -17,7 +17,8 @@ export default function Home() {
               <div style={{ paddingLeft: '56px', paddingRight: '56px', paddingTop: '32px', paddingBottom: '0', flexShrink: 0 }}>
                 <h1 className="text-2xl font-semibold text-gray-900" style={{ marginBottom: '0' }}>Approvals</h1>
               </div>
-              <TabsList className="bg-white p-0 h-auto rounded-none w-full justify-start flex-1" style={{ paddingLeft: '56px', paddingRight: '56px', marginTop: '0', paddingTop: '0' }}>
+              <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end' }}>
+                <TabsList className="bg-white p-0 h-auto rounded-none w-full justify-start" style={{ paddingLeft: '56px', paddingRight: '56px', marginTop: '0', paddingTop: '0' }}>
               <TabsTrigger
                 value="needs-review"
                 className="px-4 py-2 rounded-none border-b-2 border-transparent data-[state=active]:border-gray-900 data-[state=active]:bg-transparent"
@@ -49,6 +50,7 @@ export default function Home() {
                 Approval policies
               </TabsTrigger>
               </TabsList>
+              </div>
             </div>
             <TabsContent value="needs-review" className="mt-0">
               <div className="flex h-[calc(100vh-240px)]" style={{ gap: '24px' }}>
