@@ -604,7 +604,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                       </span>
                       <Tooltip delayDuration={200}>
                         <TooltipTrigger asChild>
-                          <div className="flex items-center text-[12px] leading-4 text-gray-600 cursor-pointer hover:text-gray-900 shrink-0 border border-gray-300 rounded-full" style={{ height: '16px', paddingLeft: '6px', paddingRight: '6px', paddingTop: '4px', paddingBottom: '4px' }}>
+                          <div className="flex items-center text-[12px] leading-4 text-gray-600 cursor-pointer hover:text-gray-900 shrink-0 border border-gray-300 rounded-full" style={{ height: '20px', paddingLeft: '6px', paddingRight: '6px', paddingTop: '4px', paddingBottom: '4px' }}>
                             <Info className="h-3 w-3" style={{ marginRight: '4px' }} />
                             <span className="font-medium">Details</span>
                           </div>
