@@ -700,6 +700,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                           </div>
                         </TooltipContent>
                       </Tooltip>
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell className="w-[125px] py-2">
