@@ -11,13 +11,13 @@ export default function Home() {
   return (
     <div className="flex flex-col h-screen" style={{ backgroundColor: '#F9F7F6' }}>
       <main className="flex-1 flex flex-col overflow-hidden" style={{ backgroundColor: '#F9F7F6' }}>
-        <div className="px-14 py-8" style={{ backgroundColor: '#F9F7F6' }}>
-          <div className="w-screen bg-white" style={{ marginLeft: '-56px', marginRight: '-56px', marginBottom: '32px', paddingLeft: '56px', paddingRight: '56px', paddingTop: '32px', paddingBottom: '24px' }}>
-            <h1 className="text-2xl font-semibold text-gray-900">Approvals</h1>
-          </div>
+        <div className="px-14" style={{ backgroundColor: '#F9F7F6', paddingTop: '0', paddingBottom: '32px' }}>
           <Tabs defaultValue="needs-review" className="w-full">
-            <div className="w-screen bg-white border-b border-gray-200" style={{ marginLeft: '-56px', marginRight: '-56px', marginBottom: '32px' }}>
-              <TabsList className="bg-white p-0 h-auto rounded-none w-full justify-start" style={{ paddingLeft: '56px', paddingRight: '56px' }}>
+            <div className="w-screen bg-white border-b border-gray-200" style={{ marginLeft: '-56px', marginRight: '-56px', marginBottom: '32px', height: '122px', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ paddingLeft: '56px', paddingRight: '56px', paddingTop: '32px', paddingBottom: '0', flexShrink: 0 }}>
+                <h1 className="text-2xl font-semibold text-gray-900" style={{ marginBottom: '0' }}>Approvals</h1>
+              </div>
+              <TabsList className="bg-white p-0 h-auto rounded-none w-full justify-start flex-1" style={{ paddingLeft: '56px', paddingRight: '56px', marginTop: '0', paddingTop: '0' }}>
               <TabsTrigger
                 value="needs-review"
                 className="px-4 py-2 rounded-none border-b-2 border-transparent data-[state=active]:border-gray-900 data-[state=active]:bg-transparent"
