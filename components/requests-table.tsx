@@ -598,27 +598,23 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                     </div>
                   </TableCell>
                   <TableCell className="min-w-0 py-2">
-                    <div className="flex items-center min-w-0">
-                      <span className="text-gray-900 min-w-0 truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>
-                        {request.description}
-                      </span>
-                      <span style={{ marginLeft: '12px', flexShrink: 0, whiteSpace: 'nowrap' }}>
-                        <Tooltip delayDuration={200}>
-                          <TooltipTrigger asChild>
-                            <div className="flex items-center text-[12px] leading-4 text-gray-600 cursor-pointer hover:text-gray-900 shrink-0 border border-gray-300 rounded-full" style={{ height: '20px', paddingLeft: '6px', paddingRight: '6px', paddingTop: '4px', paddingBottom: '4px' }}>
-                              <Info className="h-3 w-3" style={{ marginRight: '4px' }} />
-                              <span className="font-medium">Details</span>
-                            </div>
-                          </TooltipTrigger>
-                        <TooltipContent 
-                          side="right" 
-                          className={cn(
-                            "p-0 bg-[#EDEBE7] border border-gray-200 shadow-lg rounded-xl",
-                            request.tooltip.receiptImage ? "w-auto" : "w-80"
-                          )}
-                          sideOffset={8}
-                          style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}
-                        >
+                    <Tooltip delayDuration={200} open={hoveredRow === index}>
+                      <TooltipTrigger asChild>
+                        <div className="w-full">
+                          <span className="text-gray-900 min-w-0 truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>
+                            {request.description}
+                          </span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent 
+                        side="right" 
+                        className={cn(
+                          "p-0 bg-[#EDEBE7] border border-gray-200 shadow-lg rounded-xl",
+                          request.tooltip.receiptImage ? "w-auto" : "w-80"
+                        )}
+                        sideOffset={8}
+                        style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}
+                      >
                           <div className={cn("flex", request.tooltip.receiptImage ? "gap-4" : "")} style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}>
                             {request.tooltip.receiptImage && (
                               <div className="bg-white flex items-stretch shrink-0" style={{ paddingLeft: '30px', paddingRight: '30px' }}>
@@ -700,8 +696,6 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                           </div>
                         </TooltipContent>
                       </Tooltip>
-                      </span>
-                    </div>
                   </TableCell>
                   <TableCell className="w-[125px] py-2">
                     {request.hasComment && request.comment ? (
