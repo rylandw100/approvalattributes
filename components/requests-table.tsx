@@ -554,7 +554,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
               <TableHead className="h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
                 Description
               </TableHead>
-              <TableHead className="w-[125px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>Attributes</TableHead>
+              <TableHead className="w-[150px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>Attributes</TableHead>
               <TableHead className="w-[144px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}></TableHead>
               </TableRow>
             </TableHeader>
@@ -602,7 +602,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                       <span className="text-gray-900 min-w-0 truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>
                         {request.description}
                       </span>
-                      <span style={{ marginLeft: '4px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+                      <span style={{ marginLeft: '8px', flexShrink: 0, whiteSpace: 'nowrap' }}>
                         <Tooltip delayDuration={200}>
                           <TooltipTrigger asChild>
                             <div className="cursor-pointer shrink-0" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -704,7 +704,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="w-[125px] py-2">
+                  <TableCell className="w-[150px] py-2">
                     {request.hasComment && request.comment ? (
                       <Tooltip delayDuration={200}>
                         <TooltipTrigger asChild>
@@ -746,7 +746,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                         </TooltipContent>
                       </Tooltip>
                     ) : (
-                      <span className="text-gray-400" style={{ fontSize: '14px', lineHeight: '16px' }}>--</span>
+                      <span className="text-gray-400" style={{ fontSize: '14px', lineHeight: '16px' }}>-</span>
                     )}
                   </TableCell>
                   <TableCell className="w-[144px] py-2">
