@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { createPortal } from "react-dom"
 import { Search, ChevronRight, Check, X, Info, Clock } from "lucide-react"
 import { CommentIcon } from "@/components/comment-icon"
 import { 
@@ -489,6 +490,7 @@ interface RequestsTableProps {
 export function RequestsTable({ categoryName = "Time and attendance" }: RequestsTableProps) {
   const [hoveredRow, setHoveredRow] = useState<number | null>(null)
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null)
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null)
 
   // Filter requests by category
   const requests = allRequests.filter(request => request.category === categoryName)
@@ -567,10 +569,17 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = '#E5E5E5'
                     setHoveredRow(index)
+                    setMousePosition({ x: e.clientX, y: e.clientY })
+                  }}
+                  onMouseMove={(e) => {
+                    if (hoveredRow === index) {
+                      setMousePosition({ x: e.clientX, y: e.clientY })
+                    }
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = ''
                     setHoveredRow(null)
+                    setMousePosition(null)
                   }}
                 >
                   <TableCell className="w-12 py-2">
@@ -598,28 +607,29 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                     </div>
                   </TableCell>
                   <TableCell className="min-w-0 py-2">
-                    <Tooltip delayDuration={200} open={hoveredRow === index}>
-                      <TooltipTrigger asChild>
-                        <div className="w-full">
-                          <span className="text-gray-900 min-w-0 truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>
-                            {request.description}
-                          </span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent 
-                        side="right" 
+                    <div className="w-full">
+                      <span className="text-gray-900 min-w-0 truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>
+                        {request.description}
+                      </span>
+                    </div>
+                    {hoveredRow === index && mousePosition && createPortal(
+                      <div
                         className={cn(
-                          "p-0 bg-[#EDEBE7] border border-gray-200 shadow-lg rounded-xl",
+                          "fixed z-50 p-0 bg-[#EDEBE7] border border-gray-200 shadow-lg rounded-xl pointer-events-none",
                           request.tooltip.receiptImage ? "w-auto" : "w-80"
                         )}
-                        sideOffset={8}
-                        style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}
+                        style={{
+                          left: `${mousePosition.x + 12}px`,
+                          top: `${mousePosition.y}px`,
+                          transform: mousePosition.x > window.innerWidth / 2 ? 'translateX(-100%)' : 'none',
+                          minHeight: request.tooltip.receiptImage ? '550px' : undefined,
+                        }}
                       >
                           <div className={cn("flex", request.tooltip.receiptImage ? "gap-4" : "")} style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}>
                             {request.tooltip.receiptImage && (
                               <div className="bg-white flex items-stretch shrink-0" style={{ paddingLeft: '30px', paddingRight: '30px' }}>
                                 <div 
-                                  className="relative shrink-0 cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center" 
+                                  className="relative shrink-0 cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center pointer-events-auto" 
                                   style={{ height: '550px', width: '280px', minWidth: '280px' }}
                                   onClick={() => setFullScreenImage(request.tooltip.receiptImage!)}
                                 >
@@ -694,8 +704,9 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                               </div>
                             </div>
                           </div>
-                        </TooltipContent>
-                      </Tooltip>
+                      </div>,
+                      document.body
+                    )}
                   </TableCell>
                   <TableCell className="w-[125px] py-2">
                     {request.hasComment && request.comment ? (
