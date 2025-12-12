@@ -657,7 +657,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                               request.tooltip.receiptImage ? "w-[280px]" : "w-full"
                             )} style={request.tooltip.receiptImage ? { alignSelf: 'stretch' } : {}}>
                               <div className="flex flex-col">
-                                <div className="flex items-start gap-2" style={{ marginBottom: '0' }}>
+                                <div className="flex items-center gap-2" style={{ marginBottom: '0' }}>
                                   <Avatar 
                                     className="h-8 w-8 shrink-0 bg-white rounded-full" 
                                   >
