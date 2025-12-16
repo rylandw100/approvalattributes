@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { CategoryFilter } from "@/components/category-filter"
 import { RequestsTable } from "@/components/requests-table"
+import { SplitScreenView } from "@/components/split-screen-view"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
 export default function Home() {
@@ -49,6 +50,12 @@ export default function Home() {
               >
                 Approval policies
               </TabsTrigger>
+              <TabsTrigger
+                value="needs-review-2"
+                className="px-4 py-2 rounded-none border-b-2 border-transparent data-[state=active]:border-gray-900 data-[state=active]:bg-transparent"
+              >
+                Needs my review 2
+              </TabsTrigger>
               </TabsList>
               </div>
             </div>
@@ -80,6 +87,11 @@ export default function Home() {
               <div className="flex h-[calc(100vh-240px)]" style={{ gap: '24px' }}>
                 <CategoryFilter onCategoryChange={setActiveCategory} />
                 <RequestsTable categoryName={activeCategory} />
+              </div>
+            </TabsContent>
+            <TabsContent value="needs-review-2" className="mt-0">
+              <div className="h-[calc(100vh-240px)]">
+                <SplitScreenView categoryName={activeCategory} />
               </div>
             </TabsContent>
           </Tabs>
