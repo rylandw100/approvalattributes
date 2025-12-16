@@ -636,7 +636,9 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null)
   const [hoveredEmployee, setHoveredEmployee] = useState<{ name: string; x: number; y: number } | null>(null)
   const [openTooltipIndex, setOpenTooltipIndex] = useState<number | null>(null)
+  const [hoveredCommentIndex, setHoveredCommentIndex] = useState<number | null>(null)
   const employeeTooltipTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
+  const commentTooltipTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
   // Check if a detail value is a person name
   const isPersonName = (label: string, value: string): boolean => {
@@ -783,13 +785,13 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                   <TableCell className="min-w-0 py-2">
                       <Tooltip 
                         delayDuration={200}
-                        open={hoveredEmployee !== null && openTooltipIndex === index ? true : undefined}
+                        open={(hoveredEmployee !== null || hoveredCommentIndex === index) && openTooltipIndex === index ? true : undefined}
                         onOpenChange={(open) => {
-                          // Only control the tooltip state when employee card is visible
-                          if (hoveredEmployee !== null) {
-                            // Keep tooltip open if employee card tooltip is visible
+                          // Only control the tooltip state when employee card or comment tooltip is visible
+                          if (hoveredEmployee !== null || hoveredCommentIndex === index) {
+                            // Keep tooltip open if employee card or comment tooltip is visible
                             if (!open) {
-                              // Don't allow closing when employee card is visible
+                              // Don't allow closing when employee card or comment tooltip is visible
                               return
                             }
                             setOpenTooltipIndex(index)
@@ -870,9 +872,9 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                           sideOffset={8}
                           style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}
                           onPointerDownOutside={(e) => {
-                            // Prevent closing if clicking on the employee card tooltip
+                            // Prevent closing if clicking on the employee card tooltip or comment tooltip
                             const target = e.target as HTMLElement
-                            if (target.closest('[data-employee-card-tooltip]')) {
+                            if (target.closest('[data-employee-card-tooltip]') || target.closest('[data-radix-tooltip-content]')) {
                               e.preventDefault()
                             }
                           }}
@@ -936,10 +938,45 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                                 </div>
                                 {request.hasComment && request.comment && (
                                   <div className="mt-2">
-                                    <Tooltip delayDuration={200}>
+                                    <Tooltip 
+                                      delayDuration={200}
+                                      open={hoveredCommentIndex === index ? true : undefined}
+                                      onOpenChange={(open) => {
+                                        if (open) {
+                                          setHoveredCommentIndex(index)
+                                          setOpenTooltipIndex(index)
+                                        } else {
+                                          // Clear timeout and hide comment tooltip
+                                          if (commentTooltipTimeoutRef.current) {
+                                            clearTimeout(commentTooltipTimeoutRef.current)
+                                          }
+                                          commentTooltipTimeoutRef.current = setTimeout(() => {
+                                            setHoveredCommentIndex(null)
+                                          }, 150)
+                                        }
+                                      }}
+                                    >
                                       <TooltipTrigger asChild>
                                         <span 
                                           className="text-xs text-gray-600 cursor-pointer hover:text-gray-900 underline"
+                                          onMouseEnter={() => {
+                                            // Clear any existing timeout
+                                            if (commentTooltipTimeoutRef.current) {
+                                              clearTimeout(commentTooltipTimeoutRef.current)
+                                              commentTooltipTimeoutRef.current = null
+                                            }
+                                            setHoveredCommentIndex(index)
+                                            setOpenTooltipIndex(index)
+                                          }}
+                                          onMouseLeave={() => {
+                                            // Delay to allow moving to tooltip
+                                            if (commentTooltipTimeoutRef.current) {
+                                              clearTimeout(commentTooltipTimeoutRef.current)
+                                            }
+                                            commentTooltipTimeoutRef.current = setTimeout(() => {
+                                              setHoveredCommentIndex(null)
+                                            }, 150)
+                                          }}
                                         >
                                           {request.comment.totalComments === 1 
                                             ? "1 comment posted" 
@@ -950,6 +987,20 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                                         side="right" 
                                         className="w-80 p-0 bg-[#EDEBE7] border border-gray-200 shadow-lg rounded-xl"
                                         sideOffset={8}
+                                        onPointerEnter={() => {
+                                          // Clear timeout when entering tooltip
+                                          if (commentTooltipTimeoutRef.current) {
+                                            clearTimeout(commentTooltipTimeoutRef.current)
+                                            commentTooltipTimeoutRef.current = null
+                                          }
+                                        }}
+                                        onPointerLeave={() => {
+                                          // Clear timeout and hide comment tooltip
+                                          if (commentTooltipTimeoutRef.current) {
+                                            clearTimeout(commentTooltipTimeoutRef.current)
+                                          }
+                                          setHoveredCommentIndex(null)
+                                        }}
                                       >
                                         <div className="p-3">
                                           <div style={{ marginBottom: '10px' }}>
