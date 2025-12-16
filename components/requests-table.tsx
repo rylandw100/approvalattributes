@@ -735,7 +735,6 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
               <TableHead className="h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
                 Description
               </TableHead>
-              <TableHead className="w-[125px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>Attributes</TableHead>
               <TableHead className="w-[144px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}></TableHead>
               </TableRow>
             </TableHeader>
@@ -804,18 +803,63 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                         }}
                       >
                         <TooltipTrigger asChild>
-                          <span 
-                            className="text-gray-900 min-w-0 truncate cursor-pointer hover:bg-blue-50 px-1 inline-block" 
-                            style={{ 
-                              fontSize: '14px', 
-                              lineHeight: '16px',
-                              borderBottom: '1px dotted #D1D5DB',
-                              paddingBottom: '4px',
-                              paddingTop: '2px'
-                            }}
-                          >
-                            {request.description}
-                          </span>
+                          <div className="flex items-center min-w-0">
+                            <span 
+                              className="text-gray-900 min-w-0 truncate cursor-pointer hover:bg-blue-50 px-1 inline-block" 
+                              style={{ 
+                                fontSize: '14px', 
+                                lineHeight: '16px',
+                                borderBottom: '1px dotted #D1D5DB',
+                                paddingBottom: '4px',
+                                paddingTop: '2px'
+                              }}
+                            >
+                              {request.description}
+                            </span>
+                            {request.hasComment && request.comment && (
+                              <span style={{ marginLeft: '8px', flexShrink: 0 }}>
+                                <Tooltip delayDuration={200}>
+                                  <TooltipTrigger asChild>
+                                    <div className="cursor-pointer">
+                                      <CommentIcon className="h-5 w-5" />
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent 
+                                    side="right" 
+                                    className="w-80 p-0 bg-[#EDEBE7] border border-gray-200 shadow-lg rounded-xl"
+                                    sideOffset={8}
+                                  >
+                                    <div className="p-3">
+                                      <div style={{ marginBottom: '10px' }}>
+                                        <div className="text-xs text-gray-900 font-medium">
+                                          {request.comment.author}
+                                        </div>
+                                        <div className="text-xs text-gray-500">
+                                          {request.comment.date}
+                                        </div>
+                                      </div>
+                                      <div 
+                                        className="text-xs text-gray-900 font-medium"
+                                        style={{ marginBottom: request.comment.totalComments > 1 ? '10px' : '0' }}
+                                      >
+                                        {request.comment.text}
+                                      </div>
+                                      {request.comment.totalComments > 1 && (
+                                        <a 
+                                          href="#" 
+                                          className="text-xs underline font-medium hover:underline"
+                                          style={{ color: '#1E4AA9' }}
+                                          onClick={(e) => e.preventDefault()}
+                                        >
+                                          View {request.comment.totalComments} comments
+                                        </a>
+                                      )}
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </span>
+                            )}
+                          </div>
                         </TooltipTrigger>
                         <TooltipContent 
                           side="right" 
@@ -890,6 +934,53 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                                     </span>
                                   </div>
                                 </div>
+                                {request.hasComment && request.comment && (
+                                  <div className="mt-2">
+                                    <Tooltip delayDuration={200}>
+                                      <TooltipTrigger asChild>
+                                        <span 
+                                          className="text-xs text-gray-600 cursor-pointer hover:text-gray-900 underline"
+                                        >
+                                          {request.comment.totalComments === 1 
+                                            ? "1 comment posted" 
+                                            : `${request.comment.totalComments} comments posted`}
+                                        </span>
+                                      </TooltipTrigger>
+                                      <TooltipContent 
+                                        side="right" 
+                                        className="w-80 p-0 bg-[#EDEBE7] border border-gray-200 shadow-lg rounded-xl"
+                                        sideOffset={8}
+                                      >
+                                        <div className="p-3">
+                                          <div style={{ marginBottom: '10px' }}>
+                                            <div className="text-xs text-gray-900 font-medium">
+                                              {request.comment.author}
+                                            </div>
+                                            <div className="text-xs text-gray-500">
+                                              {request.comment.date}
+                                            </div>
+                                          </div>
+                                          <div 
+                                            className="text-xs text-gray-900 font-medium"
+                                            style={{ marginBottom: request.comment.totalComments > 1 ? '10px' : '0' }}
+                                          >
+                                            {request.comment.text}
+                                          </div>
+                                          {request.comment.totalComments > 1 && (
+                                            <a 
+                                              href="#" 
+                                              className="text-xs underline font-medium hover:underline"
+                                              style={{ color: '#1E4AA9' }}
+                                              onClick={(e) => e.preventDefault()}
+                                            >
+                                              View {request.comment.totalComments} comments
+                                            </a>
+                                          )}
+                                        </div>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </div>
+                                )}
                               </div>
                               <div style={{ borderTop: '1px solid #D5D3D0', paddingTop: '10px', paddingBottom: '0' }}>
                                 {(request.tooltip.showMoreLink ? request.tooltip.details.slice(0, 8) : request.tooltip.details).map((detail, idx) => {
@@ -1028,51 +1119,6 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                           </div>
                         </TooltipContent>
                       </Tooltip>
-                  </TableCell>
-                  <TableCell className="w-[125px] py-2">
-                    {request.hasComment && request.comment ? (
-                      <Tooltip delayDuration={200}>
-                        <TooltipTrigger asChild>
-                          <div className="cursor-pointer">
-                            <CommentIcon className="h-5 w-5" />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent 
-                          side="right" 
-                          className="w-80 p-0 bg-[#EDEBE7] border border-gray-200 shadow-lg rounded-xl"
-                          sideOffset={8}
-                        >
-                          <div className="p-3">
-                            <div style={{ marginBottom: '10px' }}>
-                              <div className="text-xs text-gray-900 font-medium">
-                                {request.comment.author}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                {request.comment.date}
-                              </div>
-                            </div>
-                            <div 
-                              className="text-xs text-gray-900 font-medium"
-                              style={{ marginBottom: request.comment.totalComments > 1 ? '10px' : '0' }}
-                            >
-                              {request.comment.text}
-                            </div>
-                            {request.comment.totalComments > 1 && (
-                              <a 
-                                href="#" 
-                                className="text-xs underline font-medium hover:underline"
-                                style={{ color: '#1E4AA9' }}
-                                onClick={(e) => e.preventDefault()}
-                              >
-                                View {request.comment.totalComments} comments
-                              </a>
-                            )}
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    ) : (
-                      <span className="text-gray-400" style={{ fontSize: '14px', lineHeight: '16px' }}>--</span>
-                    )}
                   </TableCell>
                   <TableCell className="w-[144px] py-2">
                     <div className="flex items-center justify-end gap-3">
