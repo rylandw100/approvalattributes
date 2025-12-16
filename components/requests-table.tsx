@@ -1,7 +1,9 @@
 "use client"
 
-import { useState } from "react"
-import { Search, ChevronRight, Check, X, Clock } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import * as React from "react"
+import { createPortal } from "react-dom"
+import { Search, ChevronRight, Check, X, Info, Clock } from "lucide-react"
 import { CommentIcon } from "@/components/comment-icon"
 import { 
   TimeOffIcon, 
@@ -486,12 +488,188 @@ interface RequestsTableProps {
   categoryName?: string
 }
 
+// Employee card tooltip component that tracks the first tooltip's position
+function EmployeeCardTooltip({ 
+  name, 
+  initialX,
+  initialY,
+  onClose, 
+  employeeTooltipTimeoutRef,
+  getEmployeeCard,
+  onCloseFirstTooltip
+}: { 
+  name: string
+  initialX: number
+  initialY: number
+  onClose: () => void
+  employeeTooltipTimeoutRef: React.MutableRefObject<NodeJS.Timeout | null>
+  getEmployeeCard: (name: string) => { name: string; title: string; level: string; department: string; location: string; tenure: string; manager: string }
+  onCloseFirstTooltip: () => void
+}) {
+  const [position, setPosition] = useState<{ x: number; y: number }>({ x: initialX, y: initialY })
+  const positionUpdateIntervalRef = React.useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    const updatePosition = () => {
+      // Find the first tooltip (details tooltip) with beige background
+      const tooltipElements = document.querySelectorAll('[data-radix-tooltip-content]')
+      let firstTooltipElement: HTMLElement | null = null
+      
+      for (const el of Array.from(tooltipElements)) {
+        const htmlEl = el as HTMLElement
+        const style = window.getComputedStyle(htmlEl)
+        
+        if (style.display !== 'none' && 
+            style.opacity !== '0' && 
+            style.visibility !== 'hidden') {
+          const bgColor = style.backgroundColor
+          if (bgColor === 'rgb(237, 235, 231)' || bgColor.includes('237, 235, 231')) {
+            firstTooltipElement = htmlEl
+            break
+          }
+        }
+      }
+      
+      if (firstTooltipElement) {
+        const tooltipRect = firstTooltipElement.getBoundingClientRect()
+        setPosition({
+          x: tooltipRect.right + 8,
+          y: tooltipRect.top
+        })
+      }
+    }
+
+    // Update position immediately and then periodically
+    updatePosition()
+    positionUpdateIntervalRef.current = setInterval(updatePosition, 100)
+
+    return () => {
+      if (positionUpdateIntervalRef.current) {
+        clearInterval(positionUpdateIntervalRef.current)
+      }
+    }
+  }, [])
+
+  return (
+    <div
+      data-employee-card-tooltip
+      className="fixed z-[60] w-80 p-0 bg-white border border-gray-200 shadow-lg rounded-xl"
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+      }}
+      onMouseEnter={() => {
+        // Clear timeout when entering tooltip
+        if (employeeTooltipTimeoutRef.current) {
+          clearTimeout(employeeTooltipTimeoutRef.current)
+          employeeTooltipTimeoutRef.current = null
+        }
+      }}
+      onMouseLeave={() => {
+        // Clear timeout and hide tooltip
+        if (employeeTooltipTimeoutRef.current) {
+          clearTimeout(employeeTooltipTimeoutRef.current)
+        }
+        onClose()
+        // Also close the first tooltip when employee card closes
+        onCloseFirstTooltip()
+      }}
+    >
+      <div className="flex flex-col p-4">
+        {/* Header Section - Avatar and Name/Title */}
+        <div className="flex items-start gap-3 mb-4">
+          <Avatar 
+            className="h-12 w-12 bg-gray-200 rounded-full shrink-0" 
+          >
+            <AvatarImage src={`/avatar-0.jpg`} className="rounded-full" />
+            <AvatarFallback 
+              className="text-sm bg-gray-200 flex items-center justify-center rounded-full font-medium text-gray-700" 
+            >
+              {name.split(' ').map(n => n[0]).join('')}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <div className="font-medium text-gray-900 mb-0.5" style={{ fontSize: '14px', lineHeight: '20px' }}>
+              {name}
+            </div>
+            <div className="text-gray-500" style={{ fontSize: '11px', lineHeight: '13px' }}>
+              {getEmployeeCard(name).title}
+            </div>
+          </div>
+        </div>
+
+        {/* Department */}
+        <div className="text-gray-500 mb-1" style={{ fontSize: '11px', lineHeight: '13px', paddingLeft: '0' }}>
+          {getEmployeeCard(name).department}
+        </div>
+
+        {/* Tenure - aligned with avatar left edge */}
+        <div className="text-gray-500 mb-1" style={{ fontSize: '11px', lineHeight: '13px', paddingLeft: '0' }}>
+          {getEmployeeCard(name).tenure}
+        </div>
+
+        {/* Location */}
+        <div className="text-gray-500 mb-4" style={{ fontSize: '11px', lineHeight: '13px', paddingLeft: '0' }}>
+          {getEmployeeCard(name).location}
+        </div>
+
+        {/* View Profile Button */}
+        <Button 
+          variant="outline" 
+          size="sm"
+          className="w-full h-8 text-xs"
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            // Handle view profile action
+          }}
+        >
+          View profile
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 export function RequestsTable({ categoryName = "Time and attendance" }: RequestsTableProps) {
   const [hoveredRow, setHoveredRow] = useState<number | null>(null)
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null)
+  const [hoveredEmployee, setHoveredEmployee] = useState<{ name: string; x: number; y: number } | null>(null)
+  const [openTooltipIndex, setOpenTooltipIndex] = useState<number | null>(null)
+  const employeeTooltipTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
-  // Filter requests by category
-  const requests = allRequests.filter(request => request.category === categoryName)
+  // Check if a detail value is a person name
+  const isPersonName = (label: string, value: string): boolean => {
+    const personLabels = ['Person', 'Manager', 'Purchaser']
+    return personLabels.includes(label) && value.trim().length > 0
+  }
+
+  // Extract person names from a value (handles "Name1 → Name2" format)
+  const extractPersonNames = (value: string): string[] => {
+    if (value.includes('→')) {
+      return value.split('→').map(name => name.trim()).filter(name => name.length > 0)
+    }
+    return [value.trim()].filter(name => name.length > 0)
+  }
+
+  // Generate employee card data (mock data for now)
+  const getEmployeeCard = (name: string) => {
+    // In a real app, this would fetch from an API
+    return {
+      name,
+      title: "Senior Engineer",
+      level: "Senior",
+      department: "Engineering",
+      location: "San Francisco, CA",
+      tenure: "3 years",
+      manager: "Sarah Johnson"
+    }
+  }
+
+  // Filter requests by category (or show all if "All approvals")
+  const requests = categoryName === "All approvals" 
+    ? allRequests 
+    : allRequests.filter(request => request.category === categoryName)
 
   const getTooltipIcon = (iconType?: string) => {
     switch (iconType) {
@@ -548,13 +726,16 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
               <TableHead className="w-[145px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
                 Requested on
               </TableHead>
-              <TableHead className="w-[180px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
-                Requested by
-              </TableHead>
               <TableHead className="h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
                 Description
               </TableHead>
-              <TableHead className="w-[150px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>Attributes</TableHead>
+              <TableHead className="w-[150px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
+                Request type
+              </TableHead>
+              <TableHead className="w-[180px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
+                Requested by
+              </TableHead>
+              <TableHead className="w-[125px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>Attributes</TableHead>
               <TableHead className="w-[144px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}></TableHead>
               </TableRow>
             </TableHeader>
@@ -579,38 +760,42 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                   <TableCell className="w-[145px] text-gray-700 py-2">
                     <div className="truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>{request.date}</div>
                   </TableCell>
-                  <TableCell className="w-[180px] py-2">
-                    <div className="flex items-center min-w-0" style={{ gap: '4px' }}>
-                      <Avatar className="h-8 w-8 shrink-0">
-                        <AvatarImage src={`/avatar-${index}.jpg`} />
-                        <AvatarFallback className="text-xs bg-gray-200">
-                          {request.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="min-w-0 flex-1" style={{ marginLeft: '4px' }}>
-                        <div className="font-medium text-gray-900 truncate" style={{ fontSize: '13px', lineHeight: '16px' }}>
-                          {request.name}
-                        </div>
-                        <div className="text-gray-500 truncate" style={{ fontSize: '11px', lineHeight: '13px' }}>
-                          {request.role}
-                        </div>
-                      </div>
-                    </div>
-                  </TableCell>
                   <TableCell className="min-w-0 py-2">
-                    <div className="flex items-center min-w-0">
-                      <span className="text-gray-900 min-w-0 truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>
-                        {request.description}
-                      </span>
-                      <span style={{ marginLeft: '8px', flexShrink: 0, whiteSpace: 'nowrap' }}>
-                        <Tooltip delayDuration={200}>
-                          <TooltipTrigger asChild>
-                            <div className="cursor-pointer shrink-0" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1.1665 8.00008C1.1665 11.7741 4.22584 14.8334 7.99984 14.8334C11.7738 14.8334 14.8332 11.7741 14.8332 8.00008C14.8332 4.22608 11.7738 1.16675 7.99984 1.16675C4.22584 1.16675 1.1665 4.22608 1.1665 8.00008ZM7.33317 5.50008C7.33317 5.13208 7.63184 4.83341 7.99984 4.83341C8.36784 4.83341 8.6665 5.13208 8.6665 5.50008C8.6665 5.86808 8.36784 6.16675 7.99984 6.16675C7.63184 6.16675 7.33317 5.86808 7.33317 5.50008ZM8.49984 7.16675V11.1667H7.49984V7.16675H8.49984Z" fill="#716F6C"/>
-                              </svg>
-                            </div>
-                          </TooltipTrigger>
+                      <Tooltip 
+                        delayDuration={200}
+                        open={hoveredEmployee !== null && openTooltipIndex === index ? true : undefined}
+                        onOpenChange={(open) => {
+                          // Only control the tooltip state when employee card is visible
+                          if (hoveredEmployee !== null) {
+                            // Keep tooltip open if employee card tooltip is visible
+                            if (!open) {
+                              // Don't allow closing when employee card is visible
+                              return
+                            }
+                            setOpenTooltipIndex(index)
+                          } else {
+                            // Normal behavior - clear index so tooltip can close naturally
+                            // Don't set it when opening, let Radix handle it
+                            if (!open) {
+                              setOpenTooltipIndex(null)
+                            }
+                          }
+                        }}
+                      >
+                        <TooltipTrigger asChild>
+                          <span 
+                            className="text-gray-900 min-w-0 truncate cursor-pointer hover:bg-blue-50 px-1 inline-block" 
+                            style={{ 
+                              fontSize: '14px', 
+                              lineHeight: '16px',
+                              borderBottom: '1px dotted #D1D5DB',
+                              paddingBottom: '4px',
+                              paddingTop: '2px'
+                            }}
+                          >
+                            {request.description}
+                          </span>
+                        </TooltipTrigger>
                         <TooltipContent 
                           side="right" 
                           className={cn(
@@ -619,12 +804,22 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                           )}
                           sideOffset={8}
                           style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}
+                          onPointerDownOutside={(e) => {
+                            // Prevent closing if clicking on the employee card tooltip
+                            const target = e.target as HTMLElement
+                            if (target.closest('[data-employee-card-tooltip]')) {
+                              e.preventDefault()
+                            }
+                          }}
+                          onEscapeKeyDown={(e) => {
+                            // Allow escape to close
+                          }}
                         >
                           <div className={cn("flex", request.tooltip.receiptImage ? "gap-4" : "")} style={request.tooltip.receiptImage ? { minHeight: '550px' } : undefined}>
                             {request.tooltip.receiptImage && (
                               <div className="bg-white flex items-stretch shrink-0" style={{ paddingLeft: '30px', paddingRight: '30px' }}>
                                 <div 
-                                  className="relative shrink-0 cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center" 
+                                  className="relative shrink-0 cursor-pointer hover:opacity-90 transition-opacity flex items-center justify-center pointer-events-auto" 
                                   style={{ height: '550px', width: '280px', minWidth: '280px' }}
                                   onClick={() => setFullScreenImage(request.tooltip.receiptImage!)}
                                 >
@@ -653,11 +848,11 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                               </div>
                             )}
                             <div className={cn(
-                              "flex flex-col gap-[10px] p-3",
-                              request.tooltip.receiptImage ? "w-[280px]" : "w-full"
+                              "flex flex-col p-3",
+                              request.tooltip.receiptImage ? "w-[215px]" : "w-full"
                             )} style={request.tooltip.receiptImage ? { alignSelf: 'stretch' } : {}}>
-                              <div className="flex flex-col">
-                                <div className="flex items-center gap-2" style={{ marginBottom: '0' }}>
+                              <div className="flex flex-col" style={{ marginBottom: '10px' }}>
+                                <div className="flex items-center gap-2">
                                   <Avatar 
                                     className="h-8 w-8 shrink-0 bg-white rounded-full" 
                                   >
@@ -668,33 +863,173 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                                       {getTooltipIcon(request.tooltip.iconType)}
                                     </AvatarFallback>
                                   </Avatar>
-                                  <div className="min-w-0 flex-1" style={{ width: 0, maxWidth: '100%' }}>
-                                    <div className="font-medium text-gray-900 break-words" style={{ fontSize: '14px', lineHeight: '20px', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>
+                                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                                    <span className="font-medium text-gray-900 break-words" style={{ fontSize: '14px', lineHeight: '20px' }}>
                                       {request.tooltip.title}
-                                    </div>
+                                    </span>
                                   </div>
                                 </div>
                               </div>
-                              <div style={{ borderTop: '1px solid #D5D3D0', paddingTop: '10px', paddingBottom: '0', maxHeight: '220px', overflowY: 'auto' }}>
-                                {request.tooltip.details.map((detail, idx) => (
-                                  <div key={idx} style={{ marginBottom: idx < request.tooltip.details.length - 1 ? '10px' : '0' }}>
-                                    <div className="text-xs text-gray-500">
-                                      {detail.label}
+                              <div style={{ borderTop: '1px solid #D5D3D0', paddingTop: '10px', paddingBottom: '0' }}>
+                                {(request.tooltip.showMoreLink ? request.tooltip.details.slice(0, 8) : request.tooltip.details).map((detail, idx) => {
+                                  const isPerson = isPersonName(detail.label, detail.value)
+                                  const personNames = isPerson ? extractPersonNames(detail.value) : []
+                                  
+                                  return (
+                                    <div key={idx} style={{ marginBottom: idx < (request.tooltip.showMoreLink ? Math.min(8, request.tooltip.details.length) : request.tooltip.details.length) - 1 ? '10px' : '0' }}>
+                                      <div className="text-xs text-gray-500">
+                                        {detail.label}
+                                      </div>
+                                      {isPerson ? (
+                                        <div className="text-xs text-gray-900 font-medium">
+                                          {personNames.map((name, nameIdx) => (
+                                            <span key={nameIdx}>
+                                              <span
+                                                className="cursor-pointer hover:bg-blue-50 px-1 inline-block"
+                                                style={{
+                                                  borderBottom: '1px dotted #D1D5DB',
+                                                  paddingBottom: '4px',
+                                                  paddingTop: '2px'
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                  // Store the current target element
+                                                  const targetElement = e.currentTarget
+                                                  
+                                                  // Use a small delay to ensure the first tooltip is fully rendered
+                                                  setTimeout(() => {
+                                                    // Check if target element still exists
+                                                    if (!targetElement || !document.body.contains(targetElement)) {
+                                                      return
+                                                    }
+                                                    
+                                                    // Find the first tooltip by looking for tooltip content with beige background
+                                                    const tooltipElements = document.querySelectorAll('[data-radix-tooltip-content]')
+                                                    let firstTooltipElement: HTMLElement | null = null
+                                                    
+                                                    // Find the details tooltip (has beige background #EDEBE7)
+                                                    for (const el of Array.from(tooltipElements)) {
+                                                      const htmlEl = el as HTMLElement
+                                                      const style = window.getComputedStyle(htmlEl)
+                                                      
+                                                      // Check if visible
+                                                      if (style.display !== 'none' && 
+                                                          style.opacity !== '0' && 
+                                                          style.visibility !== 'hidden') {
+                                                        // Check for beige background color
+                                                        const bgColor = style.backgroundColor
+                                                        const isBeige = bgColor === 'rgb(237, 235, 231)' || 
+                                                                      bgColor.includes('237, 235, 231') ||
+                                                                      htmlEl.classList.toString().includes('EDEBE7') ||
+                                                                      htmlEl.classList.toString().includes('bg-\\[\\#EDEBE7\\]')
+                                                        
+                                                        if (isBeige) {
+                                                          firstTooltipElement = htmlEl
+                                                          break
+                                                        }
+                                                      }
+                                                    }
+                                                    
+                                                    if (firstTooltipElement) {
+                                                      const tooltipRect = firstTooltipElement.getBoundingClientRect()
+                                                      // Position to the right of the first tooltip with 8px gap, aligned at the top
+                                                      setHoveredEmployee({
+                                                        name,
+                                                        x: tooltipRect.right + 8,
+                                                        y: tooltipRect.top
+                                                      })
+                                                    } else {
+                                                      // Fallback: try to find any visible tooltip
+                                                      const visibleTooltips = Array.from(tooltipElements)
+                                                        .map(el => el as HTMLElement)
+                                                        .filter(el => {
+                                                          const style = window.getComputedStyle(el)
+                                                          return style.display !== 'none' && 
+                                                                 style.opacity !== '0' &&
+                                                                 style.visibility !== 'hidden'
+                                                        })
+                                                      
+                                                      if (visibleTooltips.length > 0) {
+                                                        const tooltipRect = visibleTooltips[0].getBoundingClientRect()
+                                                        setHoveredEmployee({
+                                                          name,
+                                                          x: tooltipRect.right + 8,
+                                                          y: tooltipRect.top
+                                                        })
+                                                      } else {
+                                                        // Last resort: position relative to person name
+                                                        const rect = targetElement.getBoundingClientRect()
+                                                        setHoveredEmployee({
+                                                          name,
+                                                          x: rect.right + 8,
+                                                          y: rect.top
+                                                        })
+                                                      }
+                                                    }
+                                                  }, 50)
+                                                }}
+                                                onMouseLeave={() => {
+                                                  // Clear any existing timeout
+                                                  if (employeeTooltipTimeoutRef.current) {
+                                                    clearTimeout(employeeTooltipTimeoutRef.current)
+                                                  }
+                                                  // Delay to allow moving to tooltip
+                                                  employeeTooltipTimeoutRef.current = setTimeout(() => {
+                                                    setHoveredEmployee(null)
+                                                  }, 150)
+                                                }}
+                                              >
+                                                {name}
+                                              </span>
+                                              {nameIdx < personNames.length - 1 && <span> → </span>}
+                                            </span>
+                                          ))}
+                                        </div>
+                                      ) : (
+                                        <div className="text-xs text-gray-900 font-medium">
+                                          {detail.value}
+                                        </div>
+                                      )}
                                     </div>
-                                    <div className="text-xs text-gray-900 font-medium">
-                                      {detail.value}
-                                    </div>
-                                  </div>
-                                ))}
+                                  )
+                                })}
+                                {request.tooltip.showMoreLink && request.tooltip.details.length > 8 && (
+                                  <a 
+                                    href="#" 
+                                    className="text-xs underline font-medium"
+                                    style={{ color: '#1E4AA9', marginTop: '10px', display: 'block' }}
+                                    onClick={(e) => e.preventDefault()}
+                                  >
+                                    See more
+                                  </a>
+                                )}
                               </div>
                             </div>
                           </div>
                         </TooltipContent>
                       </Tooltip>
-                      </span>
+                  </TableCell>
+                  <TableCell className="w-[150px] text-gray-700 py-2">
+                    <div className="truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>{request.category}</div>
+                  </TableCell>
+                  <TableCell className="w-[180px] py-2">
+                    <div className="flex items-center min-w-0" style={{ gap: '4px' }}>
+                      <Avatar className="h-8 w-8 shrink-0">
+                        <AvatarImage src={`/avatar-${index}.jpg`} />
+                        <AvatarFallback className="text-xs bg-gray-200">
+                          {request.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 flex-1" style={{ marginLeft: '4px' }}>
+                        <div className="font-medium text-gray-900 truncate" style={{ fontSize: '13px', lineHeight: '16px' }}>
+                          {request.name}
+                        </div>
+                        <div className="text-gray-500 truncate" style={{ fontSize: '11px', lineHeight: '13px' }}>
+                          {request.role}
+                        </div>
+                      </div>
                     </div>
                   </TableCell>
-                  <TableCell className="w-[150px] py-2">
+                  <TableCell className="w-[125px] py-2">
                     {request.hasComment && request.comment ? (
                       <Tooltip delayDuration={200}>
                         <TooltipTrigger asChild>
@@ -736,7 +1071,7 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                         </TooltipContent>
                       </Tooltip>
                     ) : (
-                      <span className="text-gray-400" style={{ fontSize: '14px', lineHeight: '16px' }}>-</span>
+                      <span className="text-gray-400" style={{ fontSize: '14px', lineHeight: '16px' }}>--</span>
                     )}
                   </TableCell>
                   <TableCell className="w-[144px] py-2">
@@ -768,6 +1103,20 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
           </Table>
         </TooltipProvider>
       </div>
+
+      {/* Employee card tooltip */}
+      {hoveredEmployee && createPortal(
+        <EmployeeCardTooltip
+          name={hoveredEmployee.name}
+          initialX={hoveredEmployee.x}
+          initialY={hoveredEmployee.y}
+          onClose={() => setHoveredEmployee(null)}
+          employeeTooltipTimeoutRef={employeeTooltipTimeoutRef}
+          getEmployeeCard={getEmployeeCard}
+          onCloseFirstTooltip={() => setOpenTooltipIndex(null)}
+        />,
+        document.body
+      )}
       
       {/* Full Screen Image Modal */}
       {fullScreenImage && (

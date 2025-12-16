@@ -16,18 +16,43 @@ interface CategoryFilterProps {
 }
 
 export function CategoryFilter({ onCategoryChange }: CategoryFilterProps) {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const [activeIndex, setActiveIndex] = useState<number | null | -1>(-1)
 
-  // Set default to "Time and attendance" on mount
+  // Set default to "All approvals" on mount
   useEffect(() => {
     if (onCategoryChange) {
-      onCategoryChange("Time and attendance")
+      onCategoryChange("All approvals")
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <div className="w-[220px] border-l border-gray-200 flex flex-col shrink-0">
+      <div
+        className={cn(
+          "flex items-center justify-start min-h-[40px] relative w-full",
+          activeIndex === -1 && "border-l-2 border-black"
+        )}
+      >
+        <button
+          onClick={() => {
+            setActiveIndex(-1)
+            if (onCategoryChange) {
+              onCategoryChange("All approvals")
+            }
+          }}
+          className={cn(
+            "flex gap-1 items-center min-h-px min-w-px px-4 py-2 relative w-full text-left hover:bg-gray-50 transition-colors",
+          )}
+        >
+          <p className={cn(
+            "text-sm",
+            activeIndex === -1 ? "font-medium text-black" : "font-normal text-[#716f6c]"
+          )}>
+            All approvals
+          </p>
+        </button>
+      </div>
       <div
         className={cn(
           "flex items-center justify-start min-h-[40px] relative w-full",
