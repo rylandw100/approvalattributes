@@ -726,14 +726,14 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
               <TableHead className="w-[145px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
                 Requested on
               </TableHead>
-              <TableHead className="h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
-                Description
+              <TableHead className="w-[180px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
+                Requested by
               </TableHead>
               <TableHead className="w-[150px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
                 Request type
               </TableHead>
-              <TableHead className="w-[180px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
-                Requested by
+              <TableHead className="h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>
+                Description
               </TableHead>
               <TableHead className="w-[125px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}>Attributes</TableHead>
               <TableHead className="w-[144px] h-10 bg-[#FAFAFA]" style={{ fontSize: '14px', lineHeight: '16px' }}></TableHead>
@@ -759,6 +759,27 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                   </TableCell>
                   <TableCell className="w-[145px] text-gray-700 py-2">
                     <div className="truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>{request.date}</div>
+                  </TableCell>
+                  <TableCell className="w-[180px] py-2">
+                    <div className="flex items-center min-w-0" style={{ gap: '4px' }}>
+                      <Avatar className="h-8 w-8 shrink-0">
+                        <AvatarImage src={`/avatar-${index}.jpg`} />
+                        <AvatarFallback className="text-xs bg-gray-200">
+                          {request.name.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 flex-1" style={{ marginLeft: '4px' }}>
+                        <div className="font-medium text-gray-900 truncate" style={{ fontSize: '13px', lineHeight: '16px' }}>
+                          {request.name}
+                        </div>
+                        <div className="text-gray-500 truncate" style={{ fontSize: '11px', lineHeight: '13px' }}>
+                          {request.role}
+                        </div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="w-[150px] text-gray-700 py-2">
+                    <div className="truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>{request.category}</div>
                   </TableCell>
                   <TableCell className="min-w-0 py-2">
                       <Tooltip 
@@ -1007,27 +1028,6 @@ export function RequestsTable({ categoryName = "Time and attendance" }: Requests
                           </div>
                         </TooltipContent>
                       </Tooltip>
-                  </TableCell>
-                  <TableCell className="w-[150px] text-gray-700 py-2">
-                    <div className="truncate" style={{ fontSize: '14px', lineHeight: '16px' }}>{request.category}</div>
-                  </TableCell>
-                  <TableCell className="w-[180px] py-2">
-                    <div className="flex items-center min-w-0" style={{ gap: '4px' }}>
-                      <Avatar className="h-8 w-8 shrink-0">
-                        <AvatarImage src={`/avatar-${index}.jpg`} />
-                        <AvatarFallback className="text-xs bg-gray-200">
-                          {request.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="min-w-0 flex-1" style={{ marginLeft: '4px' }}>
-                        <div className="font-medium text-gray-900 truncate" style={{ fontSize: '13px', lineHeight: '16px' }}>
-                          {request.name}
-                        </div>
-                        <div className="text-gray-500 truncate" style={{ fontSize: '11px', lineHeight: '13px' }}>
-                          {request.role}
-                        </div>
-                      </div>
-                    </div>
                   </TableCell>
                   <TableCell className="w-[125px] py-2">
                     {request.hasComment && request.comment ? (
