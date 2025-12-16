@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
 
-export const allRequests = [
+const allRequests = [
   // Time and attendance
   {
     category: "Time and attendance",
@@ -484,17 +484,9 @@ export const allRequests = [
 
 interface RequestsTableProps {
   categoryName?: string
-  viewMode?: "full-width" | "split"
-  selectedItem?: number | null
-  onItemSelect?: (index: number | null) => void
 }
 
-export function RequestsTable({ 
-  categoryName = "Time and attendance",
-  viewMode = "full-width",
-  selectedItem = null,
-  onItemSelect
-}: RequestsTableProps) {
+export function RequestsTable({ categoryName = "Time and attendance" }: RequestsTableProps) {
   const [hoveredRow, setHoveredRow] = useState<number | null>(null)
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null)
 
@@ -570,31 +562,14 @@ export function RequestsTable({
               {requests.map((request, index) => (
                 <TableRow
                   key={index}
-                  className="relative group cursor-pointer"
-                  style={{ 
-                    height: '48px',
-                    backgroundColor: selectedItem === index ? '#E3F2FD' : hoveredRow === index ? '#E5E5E5' : ''
-                  }}
-                  onClick={() => {
-                    if (onItemSelect) {
-                      if (viewMode === "split") {
-                        onItemSelect(selectedItem === index ? null : index)
-                      } else {
-                        // In full-width mode, toggle selection
-                        onItemSelect(selectedItem === index ? null : index)
-                      }
-                    }
-                  }}
+                  className="relative group"
+                  style={{ height: '48px' }}
                   onMouseEnter={(e) => {
-                    if (selectedItem !== index) {
-                      e.currentTarget.style.backgroundColor = '#E5E5E5'
-                    }
+                    e.currentTarget.style.backgroundColor = '#E5E5E5'
                     setHoveredRow(index)
                   }}
                   onMouseLeave={(e) => {
-                    if (selectedItem !== index) {
-                      e.currentTarget.style.backgroundColor = ''
-                    }
+                    e.currentTarget.style.backgroundColor = ''
                     setHoveredRow(null)
                   }}
                 >
