@@ -68,3 +68,28 @@
   }
 }
 
+/* Style icon buttons in table actions */
+.approve-button-wrapper svg,
+.approve-button-wrapper path {
+  color: #16a34a !important;
+  fill: #16a34a !important;
+}
+
+.reject-button-wrapper svg,
+.reject-button-wrapper path {
+  color: #dc2626 !important;
+  fill: #dc2626 !important;
+}
+/* Reduce spacing below AppNavBar ContentWrapper */
+[class*="ContentWrapper"] {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Remove border and border radius from CardComp */
+[class*="CardComp"],
+[class*="css-wmqfn2"],
+[class*="edsygcu0"] {
+  border: none !important;
+  border-radius: 0 !important;
+}
